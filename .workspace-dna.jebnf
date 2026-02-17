@@ -1,0 +1,15 @@
+# OlympusGCP-Vault Workspace DNA (jeBNF-MPH)
+workspace_name = "OlympusGCP-Vault"
+
+  Item 0 .md "README.md"
+  Domain "20000-Context-Bridges" {
+    Domain "900-VaultBridge" {
+      Item 1 .go "main.go"
+      Item 2 .mod "go.mod"
+    }
+  }
+  Domain "60000-Information-Storage" {
+    Domain "900-LocalVault" {
+      Item 3 .jebnf "secrets.jebnf"
+    }
+  }
