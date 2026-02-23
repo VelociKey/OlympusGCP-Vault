@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package vault.v1;
+
+option go_package = "OlympusGCP-Vault/40000-Communication-Contracts/430-Protocol-Definitions/000-gen/vault/v1;vaultv1";
+
+service VaultService {
+  rpc VaultWrite (VaultWriteRequest) returns (VaultWriteResponse);
+  rpc VaultRead (VaultReadRequest) returns (VaultReadResponse);
+  rpc ListSecrets (ListSecretsRequest) returns (ListSecretsResponse);
+  rpc TestIAMPolicy (TestIAMPolicyRequest) returns (TestIAMPolicyResponse);
+}
+
+message VaultWriteRequest {
+  string key = 1;
+  string value = 2;
+}
+
+message VaultWriteResponse {}
+
+message VaultReadRequest {
+  string key = 1;
+}
+
+message VaultReadResponse {
+  string value = 1;
+}
+
+message ListSecretsRequest {
+  string prefix = 1;
+}
+
+message ListSecretsResponse {
+  repeated string keys = 1;
+}
+
+message TestIAMPolicyRequest {
+  string identity = 1;
+  string action = 2;
+  string resource = 3;
+}
+
+message TestIAMPolicyResponse {
+  bool allowed = 1;
+  string reason = 2;
+}
