@@ -37,6 +37,12 @@ const (
 	VaultServiceVaultWriteProcedure = "/vault.v1.VaultService/VaultWrite"
 	// VaultServiceVaultReadProcedure is the fully-qualified name of the VaultService's VaultRead RPC.
 	VaultServiceVaultReadProcedure = "/vault.v1.VaultService/VaultRead"
+	// VaultServiceGetSecretVersionProcedure is the fully-qualified name of the VaultService's
+	// GetSecretVersion RPC.
+	VaultServiceGetSecretVersionProcedure = "/vault.v1.VaultService/GetSecretVersion"
+	// VaultServiceListSecretVersionsProcedure is the fully-qualified name of the VaultService's
+	// ListSecretVersions RPC.
+	VaultServiceListSecretVersionsProcedure = "/vault.v1.VaultService/ListSecretVersions"
 	// VaultServiceListSecretsProcedure is the fully-qualified name of the VaultService's ListSecrets
 	// RPC.
 	VaultServiceListSecretsProcedure = "/vault.v1.VaultService/ListSecrets"
@@ -49,6 +55,8 @@ const (
 type VaultServiceClient interface {
 	VaultWrite(context.Context, *connect.Request[v1.VaultWriteRequest]) (*connect.Response[v1.VaultWriteResponse], error)
 	VaultRead(context.Context, *connect.Request[v1.VaultReadRequest]) (*connect.Response[v1.VaultReadResponse], error)
+	GetSecretVersion(context.Context, *connect.Request[v1.GetSecretVersionRequest]) (*connect.Response[v1.VaultReadResponse], error)
+	ListSecretVersions(context.Context, *connect.Request[v1.ListSecretVersionsRequest]) (*connect.Response[v1.ListSecretVersionsResponse], error)
 	ListSecrets(context.Context, *connect.Request[v1.ListSecretsRequest]) (*connect.Response[v1.ListSecretsResponse], error)
 	TestIAMPolicy(context.Context, *connect.Request[v1.TestIAMPolicyRequest]) (*connect.Response[v1.TestIAMPolicyResponse], error)
 }
@@ -76,6 +84,18 @@ func NewVaultServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 			connect.WithSchema(vaultServiceMethods.ByName("VaultRead")),
 			connect.WithClientOptions(opts...),
 		),
+		getSecretVersion: connect.NewClient[v1.GetSecretVersionRequest, v1.VaultReadResponse](
+			httpClient,
+			baseURL+VaultServiceGetSecretVersionProcedure,
+			connect.WithSchema(vaultServiceMethods.ByName("GetSecretVersion")),
+			connect.WithClientOptions(opts...),
+		),
+		listSecretVersions: connect.NewClient[v1.ListSecretVersionsRequest, v1.ListSecretVersionsResponse](
+			httpClient,
+			baseURL+VaultServiceListSecretVersionsProcedure,
+			connect.WithSchema(vaultServiceMethods.ByName("ListSecretVersions")),
+			connect.WithClientOptions(opts...),
+		),
 		listSecrets: connect.NewClient[v1.ListSecretsRequest, v1.ListSecretsResponse](
 			httpClient,
 			baseURL+VaultServiceListSecretsProcedure,
@@ -93,10 +113,12 @@ func NewVaultServiceClient(httpClient connect.HTTPClient, baseURL string, opts .
 
 // vaultServiceClient implements VaultServiceClient.
 type vaultServiceClient struct {
-	vaultWrite    *connect.Client[v1.VaultWriteRequest, v1.VaultWriteResponse]
-	vaultRead     *connect.Client[v1.VaultReadRequest, v1.VaultReadResponse]
-	listSecrets   *connect.Client[v1.ListSecretsRequest, v1.ListSecretsResponse]
-	testIAMPolicy *connect.Client[v1.TestIAMPolicyRequest, v1.TestIAMPolicyResponse]
+	vaultWrite         *connect.Client[v1.VaultWriteRequest, v1.VaultWriteResponse]
+	vaultRead          *connect.Client[v1.VaultReadRequest, v1.VaultReadResponse]
+	getSecretVersion   *connect.Client[v1.GetSecretVersionRequest, v1.VaultReadResponse]
+	listSecretVersions *connect.Client[v1.ListSecretVersionsRequest, v1.ListSecretVersionsResponse]
+	listSecrets        *connect.Client[v1.ListSecretsRequest, v1.ListSecretsResponse]
+	testIAMPolicy      *connect.Client[v1.TestIAMPolicyRequest, v1.TestIAMPolicyResponse]
 }
 
 // VaultWrite calls vault.v1.VaultService.VaultWrite.
@@ -107,6 +129,16 @@ func (c *vaultServiceClient) VaultWrite(ctx context.Context, req *connect.Reques
 // VaultRead calls vault.v1.VaultService.VaultRead.
 func (c *vaultServiceClient) VaultRead(ctx context.Context, req *connect.Request[v1.VaultReadRequest]) (*connect.Response[v1.VaultReadResponse], error) {
 	return c.vaultRead.CallUnary(ctx, req)
+}
+
+// GetSecretVersion calls vault.v1.VaultService.GetSecretVersion.
+func (c *vaultServiceClient) GetSecretVersion(ctx context.Context, req *connect.Request[v1.GetSecretVersionRequest]) (*connect.Response[v1.VaultReadResponse], error) {
+	return c.getSecretVersion.CallUnary(ctx, req)
+}
+
+// ListSecretVersions calls vault.v1.VaultService.ListSecretVersions.
+func (c *vaultServiceClient) ListSecretVersions(ctx context.Context, req *connect.Request[v1.ListSecretVersionsRequest]) (*connect.Response[v1.ListSecretVersionsResponse], error) {
+	return c.listSecretVersions.CallUnary(ctx, req)
 }
 
 // ListSecrets calls vault.v1.VaultService.ListSecrets.
@@ -123,6 +155,8 @@ func (c *vaultServiceClient) TestIAMPolicy(ctx context.Context, req *connect.Req
 type VaultServiceHandler interface {
 	VaultWrite(context.Context, *connect.Request[v1.VaultWriteRequest]) (*connect.Response[v1.VaultWriteResponse], error)
 	VaultRead(context.Context, *connect.Request[v1.VaultReadRequest]) (*connect.Response[v1.VaultReadResponse], error)
+	GetSecretVersion(context.Context, *connect.Request[v1.GetSecretVersionRequest]) (*connect.Response[v1.VaultReadResponse], error)
+	ListSecretVersions(context.Context, *connect.Request[v1.ListSecretVersionsRequest]) (*connect.Response[v1.ListSecretVersionsResponse], error)
 	ListSecrets(context.Context, *connect.Request[v1.ListSecretsRequest]) (*connect.Response[v1.ListSecretsResponse], error)
 	TestIAMPolicy(context.Context, *connect.Request[v1.TestIAMPolicyRequest]) (*connect.Response[v1.TestIAMPolicyResponse], error)
 }
@@ -146,6 +180,18 @@ func NewVaultServiceHandler(svc VaultServiceHandler, opts ...connect.HandlerOpti
 		connect.WithSchema(vaultServiceMethods.ByName("VaultRead")),
 		connect.WithHandlerOptions(opts...),
 	)
+	vaultServiceGetSecretVersionHandler := connect.NewUnaryHandler(
+		VaultServiceGetSecretVersionProcedure,
+		svc.GetSecretVersion,
+		connect.WithSchema(vaultServiceMethods.ByName("GetSecretVersion")),
+		connect.WithHandlerOptions(opts...),
+	)
+	vaultServiceListSecretVersionsHandler := connect.NewUnaryHandler(
+		VaultServiceListSecretVersionsProcedure,
+		svc.ListSecretVersions,
+		connect.WithSchema(vaultServiceMethods.ByName("ListSecretVersions")),
+		connect.WithHandlerOptions(opts...),
+	)
 	vaultServiceListSecretsHandler := connect.NewUnaryHandler(
 		VaultServiceListSecretsProcedure,
 		svc.ListSecrets,
@@ -164,6 +210,10 @@ func NewVaultServiceHandler(svc VaultServiceHandler, opts ...connect.HandlerOpti
 			vaultServiceVaultWriteHandler.ServeHTTP(w, r)
 		case VaultServiceVaultReadProcedure:
 			vaultServiceVaultReadHandler.ServeHTTP(w, r)
+		case VaultServiceGetSecretVersionProcedure:
+			vaultServiceGetSecretVersionHandler.ServeHTTP(w, r)
+		case VaultServiceListSecretVersionsProcedure:
+			vaultServiceListSecretVersionsHandler.ServeHTTP(w, r)
 		case VaultServiceListSecretsProcedure:
 			vaultServiceListSecretsHandler.ServeHTTP(w, r)
 		case VaultServiceTestIAMPolicyProcedure:
@@ -183,6 +233,14 @@ func (UnimplementedVaultServiceHandler) VaultWrite(context.Context, *connect.Req
 
 func (UnimplementedVaultServiceHandler) VaultRead(context.Context, *connect.Request[v1.VaultReadRequest]) (*connect.Response[v1.VaultReadResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("vault.v1.VaultService.VaultRead is not implemented"))
+}
+
+func (UnimplementedVaultServiceHandler) GetSecretVersion(context.Context, *connect.Request[v1.GetSecretVersionRequest]) (*connect.Response[v1.VaultReadResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("vault.v1.VaultService.GetSecretVersion is not implemented"))
+}
+
+func (UnimplementedVaultServiceHandler) ListSecretVersions(context.Context, *connect.Request[v1.ListSecretVersionsRequest]) (*connect.Response[v1.ListSecretVersionsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("vault.v1.VaultService.ListSecretVersions is not implemented"))
 }
 
 func (UnimplementedVaultServiceHandler) ListSecrets(context.Context, *connect.Request[v1.ListSecretsRequest]) (*connect.Response[v1.ListSecretsResponse], error) {

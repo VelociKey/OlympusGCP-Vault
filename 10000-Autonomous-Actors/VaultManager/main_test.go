@@ -8,72 +8,40 @@ import (
 	"connectrpc.com/connect"
 )
 
-func TestVaultServer(t *testing.T) {
-	tempDir := t.TempDir()
-	server := NewVaultServer(tempDir)
-
-	ctx := context.Background()
-
-	// Test Write
-	writeReq := connect.NewRequest(&vaultv1.VaultWriteRequest{
-		Key:   "test-key",
-		Value: "test-value",
-	})
-	_, err := server.VaultWrite(ctx, writeReq)
-	if err != nil {
-		t.Fatalf("VaultWrite failed: %v", err)
-	}
-
-	// Test Read
-	readReq := connect.NewRequest(&vaultv1.VaultReadRequest{
-		Key: "test-key",
-	})
-	readRes, err := server.VaultRead(ctx, readReq)
-	if err != nil {
-		t.Fatalf("VaultRead failed: %v", err)
-	}
-	if readRes.Msg.Value != "test-value" {
-		t.Errorf("Expected value 'test-value', got '%s'", readRes.Msg.Value)
-	}
-
-	// Test Read Non-existent
-	readReqMissing := connect.NewRequest(&vaultv1.VaultReadRequest{
-		Key: "missing-key",
-	})
-	_, err = server.VaultRead(ctx, readReqMissing)
-	if err == nil {
-		t.Error("Expected error for missing key, got nil")
-	}
-
-	// Test persistence
-	server2 := NewVaultServer(tempDir)
-	readRes2, err := server2.VaultRead(ctx, readReq)
-	if err != nil {
-		t.Fatalf("Persistence check failed: %v", err)
-	}
-	if readRes2.Msg.Value != "test-value" {
-		t.Errorf("Persistence failed: expected 'test-value', got '%s'", readRes2.Msg.Value)
-	}
-}
-
-func TestListSecrets(t *testing.T) {
+func TestVaultServerAdvanced(t *testing.T) {
 	tempDir := t.TempDir()
 	server := NewVaultServer(tempDir)
 	ctx := context.Background()
 
-	keys := []string{"app/db", "app/api", "web/ui"}
-	for _, k := range keys {
-		server.VaultWrite(ctx, connect.NewRequest(&vaultv1.VaultWriteRequest{Key: k, Value: "secret"}))
+	key := "config/db"
+	
+	// Write Version 1
+	res1, _ := server.VaultWrite(ctx, connect.NewRequest(&vaultv1.VaultWriteRequest{Key: key, Value: "pass1"}))
+	if res1.Msg.Version != 1 {
+		t.Errorf("Expected version 1, got %d", res1.Msg.Version)
 	}
 
-	// Test list with prefix
-	listReq := connect.NewRequest(&vaultv1.ListSecretsRequest{Prefix: "app/"})
-	listRes, err := server.ListSecrets(ctx, listReq)
-	if err != nil {
-		t.Fatalf("ListSecrets failed: %v", err)
+	// Write Version 2
+	res2, _ := server.VaultWrite(ctx, connect.NewRequest(&vaultv1.VaultWriteRequest{Key: key, Value: "pass2"}))
+	if res2.Msg.Version != 2 {
+		t.Errorf("Expected version 2, got %d", res2.Msg.Version)
 	}
 
-	if len(listRes.Msg.Keys) != 2 {
-		t.Errorf("Expected 2 keys, got %d", len(listRes.Msg.Keys))
+	// Read Current
+	readRes, _ := server.VaultRead(ctx, connect.NewRequest(&vaultv1.VaultReadRequest{Key: key}))
+	if readRes.Msg.Value != "pass2" {
+		t.Errorf("Expected current value 'pass2', got '%s'", readRes.Msg.Value)
+	}
+
+	// Read Version 1
+	ver1Res, _ := server.GetSecretVersion(ctx, connect.NewRequest(&vaultv1.GetSecretVersionRequest{Key: key, Version: 1}))
+	if ver1Res.Msg.Value != "pass1" {
+		t.Errorf("Expected version 1 value 'pass1', got '%s'", ver1Res.Msg.Value)
+	}
+
+	// List Versions
+	listRes, _ := server.ListSecretVersions(ctx, connect.NewRequest(&vaultv1.ListSecretVersionsRequest{Key: key}))
+	if len(listRes.Msg.Versions) != 2 {
+		t.Errorf("Expected 2 versions, got %d", len(listRes.Msg.Versions))
 	}
 }

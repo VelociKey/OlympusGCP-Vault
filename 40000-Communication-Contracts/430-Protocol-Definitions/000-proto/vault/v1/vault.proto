@@ -7,6 +7,8 @@ option go_package = "OlympusGCP-Vault/40000-Communication-Contracts/430-Protocol
 service VaultService {
   rpc VaultWrite (VaultWriteRequest) returns (VaultWriteResponse);
   rpc VaultRead (VaultReadRequest) returns (VaultReadResponse);
+  rpc GetSecretVersion (GetSecretVersionRequest) returns (VaultReadResponse);
+  rpc ListSecretVersions (ListSecretVersionsRequest) returns (ListSecretVersionsResponse);
   rpc ListSecrets (ListSecretsRequest) returns (ListSecretsResponse);
   rpc TestIAMPolicy (TestIAMPolicyRequest) returns (TestIAMPolicyResponse);
 }
@@ -16,7 +18,9 @@ message VaultWriteRequest {
   string value = 2;
 }
 
-message VaultWriteResponse {}
+message VaultWriteResponse {
+  int32 version = 1;
+}
 
 message VaultReadRequest {
   string key = 1;
@@ -24,6 +28,20 @@ message VaultReadRequest {
 
 message VaultReadResponse {
   string value = 1;
+  int32 version = 2;
+}
+
+message GetSecretVersionRequest {
+  string key = 1;
+  int32 version = 2;
+}
+
+message ListSecretVersionsRequest {
+  string key = 1;
+}
+
+message ListSecretVersionsResponse {
+  repeated int32 versions = 1;
 }
 
 message ListSecretsRequest {
