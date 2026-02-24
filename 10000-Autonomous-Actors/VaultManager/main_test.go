@@ -4,13 +4,14 @@ import (
 	"context"
 	"testing"
 
-	vaultv1 "OlympusGCP-Vault/40000-Communication-Contracts/430-Protocol-Definitions/000-gen/vault/v1"
+	vaultv1 "OlympusGCP-Vault/gen/v1/vault"
+	"OlympusGCP-Vault/10000-Autonomous-Actors/10700-Processing-Engines/10710-Reasoning-Inference/inference"
 	"connectrpc.com/connect"
 )
 
 func TestVaultServerAdvanced(t *testing.T) {
 	tempDir := t.TempDir()
-	server := NewVaultServer(tempDir)
+	server := inference.NewVaultServer(tempDir)
 	ctx := context.Background()
 
 	key := "config/db"

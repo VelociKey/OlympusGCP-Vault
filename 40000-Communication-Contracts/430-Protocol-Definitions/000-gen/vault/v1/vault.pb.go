@@ -593,7 +593,7 @@ const file_vault_v1_vault_proto_rawDesc = "" +
 	"\x10GetSecretVersion\x12!.vault.v1.GetSecretVersionRequest\x1a\x1b.vault.v1.VaultReadResponse\x12_\n" +
 	"\x12ListSecretVersions\x12#.vault.v1.ListSecretVersionsRequest\x1a$.vault.v1.ListSecretVersionsResponse\x12J\n" +
 	"\vListSecrets\x12\x1c.vault.v1.ListSecretsRequest\x1a\x1d.vault.v1.ListSecretsResponse\x12P\n" +
-	"\rTestIAMPolicy\x12\x1e.vault.v1.TestIAMPolicyRequest\x1a\x1f.vault.v1.TestIAMPolicyResponseBbZ`OlympusGCP-Vault/40000-Communication-Contracts/430-Protocol-Definitions/000-gen/vault/v1;vaultv1b\x06proto3"
+	"\rTestIAMPolicy\x12\x1e.vault.v1.TestIAMPolicyRequest\x1a\x1f.vault.v1.TestIAMPolicyResponseBbZ`OlympusGCP-Vault/gen/v1/vault;vaultv1b\x06proto3"
 
 var (
 	file_vault_v1_vault_proto_rawDescOnce sync.Once

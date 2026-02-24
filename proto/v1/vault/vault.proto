@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package vault.v1;
 
-option go_package = "OlympusGCP-Vault/40000-Communication-Contracts/430-Protocol-Definitions/000-gen/vault/v1;vaultv1";
+option go_package = "OlympusGCP-Vault/gen/v1/vault;vaultv1";
 
 service VaultService {
   rpc VaultWrite (VaultWriteRequest) returns (VaultWriteResponse);
