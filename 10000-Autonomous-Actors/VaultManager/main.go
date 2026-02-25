@@ -1,9 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"OlympusGCP-Vault/gen/v1/vault/vaultv1connect"
@@ -16,6 +20,8 @@ import (
 func main() {
 	storageDir := "../../60000-Information-Storage/VaultData"
 	server := inference.NewVaultServer(storageDir)
+	defer server.Close()
+
 	mux := http.NewServeMux()
 	path, handler := vaultv1connect.NewVaultServiceHandler(server)
 	mux.Handle(path, handler)
@@ -34,8 +40,20 @@ func main() {
 		Handler:           h2c.NewHandler(mux, &http2.Server{}),
 		ReadHeaderTimeout: 3 * time.Second,
 	}
-	err := srv.ListenAndServe()
-	if err != nil {
-		slog.Error("Server failed", "error", err)
-	}
+
+	// Graceful shutdown
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			slog.Error("Server failed", "error", err)
+		}
+	}()
+
+	<-done
+	slog.Info("VaultManager shutting down...")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	srv.Shutdown(ctx)
 }

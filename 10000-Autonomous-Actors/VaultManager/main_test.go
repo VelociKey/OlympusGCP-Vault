@@ -12,6 +12,7 @@ import (
 func TestVaultServerAdvanced(t *testing.T) {
 	tempDir := t.TempDir()
 	server := inference.NewVaultServer(tempDir)
+	defer server.Close()
 	ctx := context.Background()
 
 	key := "config/db"

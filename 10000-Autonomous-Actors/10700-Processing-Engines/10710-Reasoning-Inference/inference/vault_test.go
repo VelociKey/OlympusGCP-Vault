@@ -51,9 +51,14 @@ func TestVaultServer_CoverageExpansion(t *testing.T) {
 		t.Errorf("Expected 2 keys with prefix 'app/', got %d", len(res.Msg.Keys))
 	}
 
-	// 5. Test IAM Policy
-	policyRes, _ := server.TestIAMPolicy(ctx, connect.NewRequest(&vaultv1.TestIAMPolicyRequest{Identity: "user1", Action: "read"}))
+	// 5. Test IAM Policy (Deep Emulation)
+	policyRes, _ := server.TestIAMPolicy(ctx, connect.NewRequest(&vaultv1.TestIAMPolicyRequest{Identity: "user-123", Action: "read"}))
 	if !policyRes.Msg.Allowed {
-		t.Error("Expected IAM policy to be allowed in mock mode")
+		t.Error("Expected IAM policy to be allowed for 'user-123'")
+	}
+
+	failRes, _ := server.TestIAMPolicy(ctx, connect.NewRequest(&vaultv1.TestIAMPolicyRequest{Identity: "unauthorized", Action: "read"}))
+	if failRes.Msg.Allowed {
+		t.Error("Expected IAM policy to be denied for 'unauthorized'")
 	}
 }
