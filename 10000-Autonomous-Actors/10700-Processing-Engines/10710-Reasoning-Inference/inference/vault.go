@@ -12,8 +12,8 @@ import (
 	"strings"
 	"sync"
 
-	vaultv1 "OlympusGCP-Vault/gen/v1/vault"
-	"Olympus2/90000-Enablement-Labs/P0000-pkg/000-policy"
+	vaultv1 "olympus.fleet/00SDLC/OlympusGCP-Vault/gen/v1/vault"
+	"olympus.fleet/00SDLC/Olympus2/90000-Enablement-Labs/P0900-Labs/170-Policy"
 	"connectrpc.com/connect"
 	"go.etcd.io/bbolt"
 )
@@ -60,9 +60,9 @@ func NewVaultServer(storageDir string) *VaultServer {
 	cwd, _ := os.Getwd()
 	slog.Info("VaultServer initializing", "cwd", cwd)
 	policyPaths := []string{
-		"../../George/C0100-Configuration-Registry/POLICY.jebnf",
-		"George/C0100-Configuration-Registry/POLICY.jebnf",
-		"../../../../../George/C0100-Configuration-Registry/POLICY.jebnf",
+		"../../olympus.fleet/20POSI/George/C0100-Configuration-Registry/POLICY.jebnf",
+		"olympus.fleet/20POSI/George/C0100-Configuration-Registry/POLICY.jebnf",
+		"../../../../../olympus.fleet/20POSI/George/C0100-Configuration-Registry/POLICY.jebnf",
 	}
 	for _, p := range policyPaths {
 		if err := s.pe.Load(p); err == nil {

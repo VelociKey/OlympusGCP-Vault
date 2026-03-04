@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"OlympusGCP-Vault/gen/v1/vault/vaultv1connect"
-	"OlympusGCP-Vault/10000-Autonomous-Actors/10700-Processing-Engines/10710-Reasoning-Inference/inference"
+	"olympus.fleet/00SDLC/OlympusGCP-Vault/gen/v1/vault/vaultv1connect"
+	"olympus.fleet/00SDLC/OlympusGCP-Vault/10000-Autonomous-Actors/10700-Processing-Engines/10710-Reasoning-Inference/inference"
 
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"

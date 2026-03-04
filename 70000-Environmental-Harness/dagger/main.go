@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"dagger/olympusgcp-vault/internal/dagger"
+	"olympus.fleet/00SDLC/OlympusForge/70000-Environmental-Harness/dagger/olympusgcp-vault/internal/dagger"
 )
 
 type OlympusGCPVault struct{}
