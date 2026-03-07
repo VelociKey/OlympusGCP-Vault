@@ -12,8 +12,8 @@ import (
 	"strings"
 	"sync"
 
-	vaultv1 "olympus.fleet/00SDLC/OlympusGCP-Vault/gen/v1/vault"
-	"olympus.fleet/00SDLC/Olympus2/90000-Enablement-Labs/P0900-Labs/170-Policy"
+	vaultv1 "olympus.fleet/00SDLC/OlympusGCP-Vault/40000-Communication-Contracts/40400-Protocol-Synthetics/connect-rpc/gen/v1/vault"
+	"olympus.fleet/00SDLC/Olympus2/90000-Enablement-Labs/90200-Logic-Libraries/170-Policy"
 	"connectrpc.com/connect"
 	"go.etcd.io/bbolt"
 )

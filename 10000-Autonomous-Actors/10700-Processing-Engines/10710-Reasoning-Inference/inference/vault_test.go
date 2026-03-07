@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	vaultv1 "olympus.fleet/00SDLC/OlympusGCP-Vault/gen/v1/vault"
+	vaultv1 "olympus.fleet/00SDLC/OlympusGCP-Vault/40000-Communication-Contracts/40400-Protocol-Synthetics/connect-rpc/gen/v1/vault"
 	"connectrpc.com/connect"
 )
 
@@ -32,7 +32,7 @@ func TestVaultServer_CoverageExpansion(t *testing.T) {
 	}
 
 	// 3. Test Get Secret Version Out of Range
-	server.VaultWrite(ctx, connect.NewRequest(&vaultv1.VaultWriteRequest{Key: "k1", Value: "olympus.fleet/00SDLC/Olympus2/40000-Communication-Contracts/430-Protocol-Definitions/400-Gen/olympus/v1"}))
+	server.VaultWrite(ctx, connect.NewRequest(&vaultv1.VaultWriteRequest{Key: "k1", Value: "olympus.fleet/00SDLC/Olympus2/40000-Communication-Contracts/40400-Protocol-Synthetics/connect-rpc/olympus/v1"}))
 	_, err = server.GetSecretVersion(ctx, connect.NewRequest(&vaultv1.GetSecretVersionRequest{Key: "k1", Version: 100}))
 	if err == nil {
 		t.Error("Expected error for out-of-range version, got nil")

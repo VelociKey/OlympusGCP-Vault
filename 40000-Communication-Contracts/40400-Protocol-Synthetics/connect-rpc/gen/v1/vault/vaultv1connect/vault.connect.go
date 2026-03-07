@@ -5,7 +5,7 @@
 package vaultv1connect
 
 import (
-	vault "olympus.fleet/00SDLC/OlympusGCP-Vault/gen/v1/vault"
+	vault "olympus.fleet/00SDLC/OlympusGCP-Vault/40000-Communication-Contracts/40400-Protocol-Synthetics/connect-rpc/gen/v1/vault"
 	connect "connectrpc.com/connect"
 	context "context"
 	errors "errors"
